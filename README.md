@@ -1,4 +1,5 @@
 Train Ticket Booking System — CLI Application
+
 A command-line IRCTC-style train ticket booking system built in Java. Supports user registration, login, train search, seat booking, ticket cancellation, and booking history — all persisted locally via JSON flat-file storage.
 
 Features
