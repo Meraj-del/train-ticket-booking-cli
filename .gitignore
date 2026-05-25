@@ -1,0 +1,5 @@
+build/
+.gradle/
+.idea/
+*.class
+app/src/main/java/ticket/booking/localDB/user.json
