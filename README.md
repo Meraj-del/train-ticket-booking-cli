@@ -121,9 +121,30 @@ No date-based filtering — trains show regardless of travel date
 Concurrent booking safety — no locking on JSON file writes (fine for single-user CLI)
 Could be extended with Spring Boot REST API, MySQL, and JWT authentication
 
-
 Author
 Md Meraj · Java Backend Developer
 GitHub
 
 Part of my Java backend development portfolio — built to practice OOP, file I/O, and CLI application design.
+
+## Learning Journey
+
+This project was built as a deliberate stepping stone before building a 
+production-grade distributed backend system.
+
+**What this project practices:**
+- OOP fundamentals — entities, services, utility classes
+- File I/O and JSON serialization with Jackson
+- BCrypt password hashing
+- CLI application design and user interaction flow
+- Gradle build system
+
+**What came next:**
+
+**Multithreaded Server** — Java socket programming, Thread per connection 
+vs ExecutorService thread pool, load tested with Apache JMeter  
+→ [Java Multithreaded Server](https://github.com/Meraj-del/java-multithreaded-server)
+
+**Expense Tracker Microservices Backend** — Spring Boot, Kafka, Redis, 
+Kong API Gateway, Docker, AWS  
+→ [Expense Tracker App](https://github.com/Meraj-del/expense-tracker-app-microservices)
