@@ -1,150 +1,399 @@
-Train Ticket Booking System — CLI Application
+# Train Ticket Booking System
 
-A command-line IRCTC-style train ticket booking system built in Java. Supports user registration, login, train search, seat booking, ticket cancellation, and booking history — all persisted locally via JSON flat-file storage.
+A Java-based command-line train ticket booking system inspired by IRCTC workflows.
 
-Features
+The application supports user registration, authentication, train search, ticket booking, cancellation, and booking history management while persisting all data locally using JSON files.
 
-User signup and login with BCrypt password hashing
-Search trains by source and destination
-View available seats in real time
-Book tickets with automatic seat allocation
-Cancel booked tickets
-View all bookings for logged-in user
-JSON-based local persistence — no database required
+This project focuses on applying core Java concepts, object-oriented design principles, file-based persistence, and secure authentication without relying on external databases.
 
+---
 
-Architecture
-CLI (App.java)
-     ↓
-UserBookingService          TrainService
-     ↓                           ↓
-user.json (flat file)     trains.json (flat file)
-Components
-Entities
+# Overview
 
-User — stores userId, name, hashed password, list of booked tickets
-Train — stores trainId, trainNo, seat matrix (2D list), station list, station times
-Ticket — stores ticketId, userId, source, destination, travel date, train snapshot
+The system simulates a simplified railway reservation platform where users can:
 
-Services
+* Create an account
+* Login securely
+* Search trains by route
+* Book tickets
+* Cancel tickets
+* View booking history
 
-UserBookingService — handles signup, login, ticket booking, cancellation, booking history
-TrainService — handles train loading, seat availability search, seat booking and persistence
+All application data is persisted locally using JSON files, making the project lightweight and easy to run without additional infrastructure.
 
-Utility
+---
 
-UserServiceUtil — BCrypt password hashing and verification
+# Architecture
 
-Storage
+```text
+CLI Application
+       │
+       ▼
+Application Layer
+       │
+       ▼
+Service Layer
+ ┌──────────────┬──────────────┐
+ ▼              ▼
+User Service   Train Service
+ └──────────────┴──────────────┘
+       │
+       ▼
+JSON Persistence Layer
+ ┌──────────────┬──────────────┐
+ ▼              ▼
+users.json    trains.json
+```
 
-trains.json — train data with seat matrix and station schedules
-user.json — user data with embedded ticket history
+---
 
+# Project Structure
 
-Tech Stack
-LayerTechnologyLanguageJava 21Build ToolGradleJSON ParsingJackson Databind 2.18.2Password HashingjBCrypt 0.4StorageJSON flat files (local filesystem)
+```text
+train-ticket-booking-system/
+│
+├── src/
+│   ├── entity/
+│   │   ├── User.java
+│   │   ├── Train.java
+│   │   └── Ticket.java
+│   │
+│   ├── service/
+│   │   ├── UserBookingService.java
+│   │   └── TrainService.java
+│   │
+│   ├── util/
+│   │   └── UserServiceUtil.java
+│   │
+│   └── App.java
+│
+├── users.json
+├── trains.json
+└── README.md
+```
 
-Data Model
-Train JSON Structure
-json{
-  "train_id": "bacs1",
-  "train_no": "12345",
-  "seats": [[1,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],
-  "stations": ["Bangalore", "Jaipur", "Delhi"],
-  "station_times": {
-    "Bangalore": "13:50:00",
-    "Jaipur": "15:50:00",
-    "Delhi": "18:50:00"
-  }
-}
-Seat matrix uses 0 = available, 1 = booked. The booking engine scans row by row and allocates the first available seat.
-User JSON Structure
-json{
-  "user_id": "uuid-here",
-  "name": "Meraj",
-  "hashed_password": "$2a$10$...",
-  "tickets_booked": []
-}
-Ticket JSON Structure
-json{
-  "ticketId": "uuid-here",
-  "userId": "uuid-here",
-  "source": "Bangalore",
-  "destination": "Delhi",
-  "dateOfTravel": 1768916279279,
-  "train": { ... }
-}
+---
 
-How to Run
-Prerequisites
+# Features
 
-Java 21
-Gradle
+## User Authentication
 
-Setup
-1. Clone the repository
-bashgit clone https://github.com/Meraj-del/train-ticket-booking-cli.git
-cd train-ticket-booking-cli
-2. Build the project
-bash./gradlew build
-3. Run the application
-bash./gradlew run
+Supports:
 
-CLI Menu Flow
-=== Train Ticket Booking System ===
+* User Registration
+* User Login
+* BCrypt Password Hashing
+
+Passwords are never stored in plain text.
+
+Authentication is performed using BCrypt hash verification.
+
+---
+
+## Train Search
+
+Users can search trains using:
+
+* Source Station
+* Destination Station
+
+The system validates route direction to ensure the destination appears after the source station.
+
+---
+
+## Ticket Booking
+
+Features:
+
+* Automatic Seat Allocation
+* Real-Time Seat Availability
+* Ticket Generation
+* Booking Persistence
+
+The booking engine scans the seat matrix and allocates the first available seat.
+
+---
+
+## Ticket Cancellation
+
+Users can:
+
+* Cancel previously booked tickets
+* Release allocated seats
+* Update booking history automatically
+
+---
+
+## Booking History
+
+Users can view all previously booked tickets associated with their account.
+
+Booking information remains available across application restarts through JSON persistence.
+
+---
+
+# Data Persistence
+
+The application uses JSON flat-file storage instead of a traditional database.
+
+## User Storage
+
+```text
+users.json
+```
+
+Stores:
+
+* User Information
+* BCrypt Password Hashes
+* Ticket History
+
+---
+
+## Train Storage
+
+```text
+trains.json
+```
+
+Stores:
+
+* Train Details
+* Routes
+* Seat Availability
+* Station Schedules
+
+---
+
+# Data Model
+
+## User
+
+Represents a registered customer.
+
+Attributes:
+
+* User ID
+* Name
+* Hashed Password
+* Ticket History
+
+---
+
+## Train
+
+Represents a train and its route.
+
+Attributes:
+
+* Train ID
+* Train Number
+* Station List
+* Station Timings
+* Seat Matrix
+
+---
+
+## Ticket
+
+Represents a booking record.
+
+Attributes:
+
+* Ticket ID
+* User ID
+* Source Station
+* Destination Station
+* Travel Date
+* Train Snapshot
+
+---
+
+# Security
+
+Password security is implemented using BCrypt.
+
+Benefits:
+
+* One-way hashing
+* Salt generation
+* Protection against rainbow table attacks
+* Industry-standard password storage approach
+
+No user password is stored in plain text.
+
+---
+
+# Key Design Decisions
+
+## JSON-Based Persistence
+
+Chosen to:
+
+* Avoid database setup
+* Keep the application portable
+* Focus on Java fundamentals
+
+---
+
+## Train Snapshot Storage
+
+Each ticket stores a snapshot of the train at booking time.
+
+Benefits:
+
+* Historical booking integrity
+* Tickets remain valid even if train information changes later
+
+---
+
+## Deterministic Seat Allocation
+
+The booking engine uses a predictable allocation strategy.
+
+```text
+0 = Available
+1 = Booked
+```
+
+The first available seat is assigned automatically.
+
+---
+
+## Route Validation
+
+The booking system validates station ordering.
+
+Example:
+
+```text
+Bangalore → Jaipur → Delhi
+```
+
+Valid:
+
+```text
+Bangalore → Delhi
+```
+
+Invalid:
+
+```text
+Delhi → Bangalore
+```
+
+This prevents reverse-direction bookings.
+
+---
+
+# Technology Stack
+
+| Layer             | Technology       |
+| ----------------- | ---------------- |
+| Language          | Java 21          |
+| Build Tool        | Gradle           |
+| JSON Processing   | Jackson Databind |
+| Password Security | jBCrypt          |
+| Storage           | JSON Flat Files  |
+
+---
+
+# Running the Project
+
+## Prerequisites
+
+* Java 21
+* Gradle
+
+---
+
+## Build
+
+```bash
+./gradlew build
+```
+
+---
+
+## Run
+
+```bash
+./gradlew run
+```
+
+---
+
+# CLI Flow
+
+```text
+Train Ticket Booking System
+
 1. Sign Up
 2. Login
 3. Exit
+```
 
-After login:
+After Login:
+
+```text
 1. Search Trains
 2. Book Ticket
 3. Cancel Ticket
 4. View Bookings
 5. Logout
+```
 
-Sample Trains (Pre-loaded)
-Train IDTrain NoRouteDeparturebacs112345Bangalore → Jaipur → Delhi13:50bacs212346Mumbai → Delhi14:00
+---
 
-Key Design Decisions
-BCrypt password hashing — passwords are never stored in plaintext. jBCrypt hashes on signup and verifies on login without ever decrypting.
-Train snapshot in ticket — each ticket stores a snapshot of the train at booking time. This preserves the booking record even if train data changes later.
-JSON flat-file storage — chosen deliberately to keep the project dependency-free and portable. No database setup required to run.
-Seat allocation algorithm — linear scan of the 2D seat matrix. First 0 found gets marked 1. Simple and deterministic.
-Station order validation — validTrain() checks that source appears before destination in the station list. Prevents reverse-direction bookings.
+# Skills Demonstrated
 
-Limitations and Future Improvements
+* Core Java
+* Object-Oriented Programming
+* File I/O
+* JSON Serialization
+* Authentication & Security
+* BCrypt Password Hashing
+* Data Modeling
+* Service Layer Design
+* Gradle Build Automation
+* CLI Application Development
 
-Single-seat booking only — multi-passenger booking not yet supported
-No seat selection — system auto-assigns first available seat
-No date-based filtering — trains show regardless of travel date
-Concurrent booking safety — no locking on JSON file writes (fine for single-user CLI)
-Could be extended with Spring Boot REST API, MySQL, and JWT authentication
+---
 
-Author
-Md Meraj · Java Backend Developer
-GitHub
+# Learning Progression
 
-Part of my Java backend development portfolio — built to practice OOP, file I/O, and CLI application design.
+This project represents the beginning of my backend engineering journey.
 
-## Learning Journey
+## What I Learned
 
-This project was built as a deliberate stepping stone before building a 
-production-grade distributed backend system.
+* Object-Oriented Design
+* Service Layer Architecture
+* JSON Persistence
+* Authentication Fundamentals
+* Secure Password Storage
+* Java Application Structure
 
-**What this project practices:**
-- OOP fundamentals — entities, services, utility classes
-- File I/O and JSON serialization with Jackson
-- BCrypt password hashing
-- CLI application design and user interaction flow
-- Gradle build system
+Key takeaway:
 
-**What came next:**
+> Backend systems are more than business logic. They require proper data modeling, persistence strategies, and security practices.
 
-**Multithreaded Server** — Java socket programming, Thread per connection 
-vs ExecutorService thread pool, load tested with Apache JMeter  
-→ [Java Multithreaded Server](https://github.com/Meraj-del/java-multithreaded-server)
+---
 
-**Expense Tracker Microservices Backend** — Spring Boot, Kafka, Redis, 
-Kong API Gateway, Docker, AWS  
-→ [Expense Tracker App](https://github.com/Meraj-del/expense-tracker-app-microservices)
+## What Came Next
+
+After building CRUD-style business applications, I focused on scalability and concurrency.
+
+### Java Multithreaded Server
+
+Built to understand:
+
+* Socket Programming
+* Multithreading
+* Thread Pools
+* ExecutorService
+* Server Scalability
+* Load Testing with Apache JMeter
+
+Key takeaway:
+
+> Efficient resource management is essential for building scalable backend systems.
